@@ -1,8 +1,11 @@
 package com.address.service.impl;
 
+import com.address.client.EmployeeClient;
 import com.address.entity.Address;
 import com.address.entity.dto.AddressDto;
 import com.address.entity.dto.AddressRequest;
+import com.address.entity.dto.EmployeeDto;
+import com.address.exceptions.CustomException;
 import com.address.exceptions.NotFoundException;
 import com.address.repository.AddressRepository;
 import com.address.service.AddressServiceImpl;
@@ -19,11 +22,13 @@ public class AddressService implements AddressServiceImpl {
 
     private final AddressRepository addressRepository;
     private final ModelMapper modelMapper;
+    private final EmployeeClient employeeClient;
 
     @Override
     public List<AddressDto> saveAddress(AddressRequest request) {
 
-        //TODO: check if emp exists by feign client
+        //Checked employee by feign client
+        employeeClient.findById(request.getEmpId());
 
         List<Address> addressesToSave = saveOrUpdateAddresses(request);
         List<Address> addresses = addressRepository.saveAll(addressesToSave);
@@ -32,6 +37,8 @@ public class AddressService implements AddressServiceImpl {
 
     @Override
     public List<AddressDto> updateAddress(AddressRequest request) {
+        //Checked if employee exist by feign client
+        employeeClient.findById(request.getEmpId());
         List<Address> addressesToUpdate = saveOrUpdateAddresses(request);
         List<Long> incomingIds = addressesToUpdate.stream().map(Address::getId).toList();
         List<Long> existingIds = addressRepository.findAllByEmpId(request.getEmpId()).stream().map(Address::getId).toList();
@@ -55,7 +62,6 @@ public class AddressService implements AddressServiceImpl {
     }
     @Override
     public List<AddressDto> getAddresses() {
-        //TODO: check if emp exists by feign client
         List<Address> addresses = addressRepository.findAll();
        return addresses.stream().map(adr ->modelMapper.map(adr, AddressDto.class)).toList();
 
@@ -70,7 +76,8 @@ public class AddressService implements AddressServiceImpl {
     @Override
     public List<AddressDto> getAddressesByEmpId(long empId) {
 
-        //TODO: check if emp exists by feign client
+        //checked if emp exists by feign client
+        employeeClient.findById(empId);
 
         List<Address> addresses = addressRepository.findAllByEmpId(empId);
         return addresses.stream().map(adr ->modelMapper.map(adr, AddressDto.class)).toList();
@@ -87,6 +94,8 @@ public class AddressService implements AddressServiceImpl {
             address.setStreet(addressDto.getStreet());
             address.setZipCode(addressDto.getZipCode());
             address.setState(addressDto.getState());
+            address.setAddressType(addressDto.getAddressType());
+            address.setEmpId(request.getEmpId());
             addresses.add(address);
 
         }

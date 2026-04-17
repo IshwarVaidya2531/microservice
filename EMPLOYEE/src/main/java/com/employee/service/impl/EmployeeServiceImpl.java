@@ -51,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto findById(Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Employee with ID " + id + " does not exist"));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new NotFoundException("Employee with ID " + id + " does not exist"));
         return modelMapper.map(employee, EmployeeDto.class);
     }
 

@@ -20,12 +20,12 @@ public class AddressController {
     private final AddressService addressService;
 
     @PostMapping
-    public ResponseEntity<Response<List<AddressDto>>> saveAddress(AddressRequest request) {
+    public ResponseEntity<Response<List<AddressDto>>> saveAddress(@RequestBody AddressRequest request) {
        return new ResponseEntity<>(new Response<>(HttpStatus.CREATED.value(), "Addresses saved successfully",addressService.saveAddress(request),true),HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseEntity<Response<List<AddressDto>>> updateAddress(AddressRequest request) {
+    public ResponseEntity<Response<List<AddressDto>>> updateAddress(@RequestBody AddressRequest request) {
         return new ResponseEntity<>(new Response<>(HttpStatus.OK.value(), "Addresses updated successfully",addressService.updateAddress(request),true),HttpStatus.CREATED);
 
     }
@@ -40,7 +40,7 @@ public class AddressController {
         return new ResponseEntity<>(new Response<>(HttpStatus.OK.value(),"Address fetched Successfully",addressService.getAddressById(id),true),HttpStatus.OK);
     }
 
-    @GetMapping("/{empId}")
+    @GetMapping("/byempId/{empId}")
     public ResponseEntity<Response<List<AddressDto>>> getAddressByEmpId(@PathVariable long empId) {
         return new ResponseEntity<>(new Response<>(HttpStatus.OK.value(),"Address fetched Successfully",addressService.getAddressesByEmpId(empId),true),HttpStatus.OK);
     }
