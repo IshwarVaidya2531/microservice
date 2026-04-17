@@ -1,5 +1,6 @@
 package com.employee.advisors;
 
+import com.employee.exceptions.CustomException;
 import com.employee.exceptions.NotFoundException;
 import com.employee.response.Response;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,11 @@ public class AppWideExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Response<Object>> handleNotFoundException(NotFoundException ex) {
         return  new ResponseEntity<>(new Response<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(),null,false),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Response<Object>> handleCustomException(CustomException ex) {
+        return  new ResponseEntity<>(new Response<>(ex.getStatus().value(), ex.getMessage(),null,false),ex.getStatus());
     }
 
 }
